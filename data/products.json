@@ -1,0 +1,28 @@
+{
+  "products": [
+    {
+      "id": "sony-a7iv",
+      "name": "Sony A7 IV Body",
+      "price": "52.900.000",
+      "category": "Fullframe",
+      "highlight": "33MP, 4K 60p, IBIS 5.5 stops, Eye AF",
+      "best_for": "Chụp cưới, portrait, video chuyên nghiệp"
+    },
+    {
+      "id": "sony-a6700",
+      "name": "Sony A6700 Body",
+      "price": "31.900.000",
+      "category": "APS-C",
+      "highlight": "26MP, 4K 120p, AI tracking",
+      "best_for": "Du lịch, vlog, nhiếp ảnh đường phố"
+    },
+    {
+      "id": "canon-r8",
+      "name": "Canon EOS R8 Body",
+      "price": "42.500.000",
+      "category": "Fullframe",
+      "highlight": "24MP, 4K 60p, nhẹ chỉ 461g",
+      "best_for": "Người mới lên fullframe"
+    }
+  ]
+}
