@@ -1,28 +1,56 @@
 {
+  "shop_info": {
+    "name": "MinciuFilm",
+    "location": "Hải Phòng",
+    "policy": "Tất cả máy cũ đã kiểm tra kỹ, vệ sinh sạch sẽ, hoạt động tốt. Báo rõ lỗi nếu có. Bảo hành 1 tháng. Ship COD toàn quốc, không cọc."
+  },
+  "categories": {
+    "film_pns": "Máy Point & Shoot Film",
+    "film_slr": "Máy SLR Film & Rangefinder",
+    "digital_compact": "Máy Compact Digital & Superzoom"
+  },
   "products": [
     {
-      "id": "sony-a7iv",
-      "name": "Sony A7 IV Body",
-      "price": "52.900.000",
-      "category": "Fullframe",
-      "highlight": "33MP, 4K 60p, IBIS 5.5 stops, Eye AF",
-      "best_for": "Chụp cưới, portrait, video chuyên nghiệp"
+      "category": "film_pns",
+      "name": "Pentax Espio 115 / 115M",
+      "price": "Liên hệ",
+      "status": "Đẹp, full chức năng",
+      "highlight": "Zoom sắc nét, nhỏ gọn"
     },
     {
-      "id": "sony-a6700",
-      "name": "Sony A6700 Body",
-      "price": "31.900.000",
-      "category": "APS-C",
-      "highlight": "26MP, 4K 120p, AI tracking",
-      "best_for": "Du lịch, vlog, nhiếp ảnh đường phố"
+      "category": "film_pns",
+      "name": "Canon Autoboy 3",
+      "price": "Liên hệ",
+      "status": "Hoạt động tốt",
+      "highlight": "Chất ảnh Canon kinh điển"
     },
     {
-      "id": "canon-r8",
-      "name": "Canon EOS R8 Body",
-      "price": "42.500.000",
-      "category": "Fullframe",
-      "highlight": "24MP, 4K 60p, nhẹ chỉ 461g",
-      "best_for": "Người mới lên fullframe"
+      "category": "film_pns",
+      "name": "Minolta Capios / Bigmini",
+      "price": "Liên hệ",
+      "status": "Đẹp lung linh",
+      "highlight": "Lens sắc, nhỏ gọn bỏ túi"
+    },
+    {
+      "category": "film_slr",
+      "name": "Pentax K2 / MZ3",
+      "price": "Liên hệ",
+      "status": "Hoạt động tốt",
+      "highlight": "Máy cơ bền bỉ, chất ảnh đẹp"
+    },
+    {
+      "category": "film_slr",
+      "name": "Olympus OM-1 / Nikon F80",
+      "price": "Liên hệ",
+      "status": "Kiểm tra kỹ",
+      "highlight": "Huyền thoại film"
+    },
+    {
+      "category": "digital_compact",
+      "name": "Lumix FZ10 / FZ18 / FZ50",
+      "price": "Liên hệ",
+      "status": "Hoạt động tốt",
+      "highlight": "Siêu zoom mạnh"
     }
   ]
 }

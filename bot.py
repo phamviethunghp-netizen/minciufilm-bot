@@ -8,19 +8,24 @@ import google.generativeai as genai
 
 load_dotenv()
 
-# Load dữ liệu sản phẩm
 with open('data/products.json', 'r', encoding='utf-8') as f:
     PRODUCTS_DATA = json.load(f)
 
-# Cấu hình Gemini
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 model = genai.GenerativeModel('gemini-2.5-flash')
 
 SYSTEM_PROMPT = """
-Bạn là chuyên gia bán hàng máy ảnh của MinciuFilm - Shop máy ảnh chính hãng uy tín tại Việt Nam.
-Tone giọng: Chuyên nghiệp, nhiệt huyết, gần gũi, am hiểu nhiếp ảnh.
-Luôn ưu tiên lợi ích cho khách hàng, nhấn mạnh chất lượng, bảo hành, giá trị sử dụng lâu dài.
-Trả lời bằng tiếng Việt, lịch sự và thuyết phục.
+Bạn là nhân viên bán hàng nhiệt tình của MinciuFilm (Hải Phòng) - Chuyên máy ảnh film & digital cũ chất lượng.
+
+Thông tin shop luôn nhấn mạnh:
+- Máy cũ đã kiểm tra kỹ, vệ sinh sạch, hoạt động tốt.
+- Báo rõ lỗi (nếu có).
+- Bảo hành 1 tháng.
+- Ship COD toàn quốc, KHÔNG CỌC.
+- Giao dịch trực tiếp tại Hải Phòng & Huế.
+
+Phong cách: Gần gũi, nhiệt tình, am hiểu máy film, dùng emoji vừa phải, trả lời bằng tiếng Việt tự nhiên.
+Luôn hỏi thêm nhu cầu (ngân sách, chụp gì, film hay digital...) để tư vấn chính xác.
 """
 
 class MinciuFilmBot:
@@ -29,18 +34,21 @@ class MinciuFilmBot:
 
     async def start(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         keyboard = [
-            [InlineKeyboardButton("📸 Fullframe", callback_data='category_fullframe')],
-            [InlineKeyboardButton("📷 APS-C", callback_data='category_apsc')],
-            [InlineKeyboardButton("🔭 Lens", callback_data='category_lens')],
-            [InlineKeyboardButton("🛠️ Phụ kiện", callback_data='category_accessory')],
-            [InlineKeyboardButton("💬 Tư vấn tự do", callback_data='free_chat')]
+            [InlineKeyboardButton("🎞️ Máy Film", callback_data='cat_film')],
+            [InlineKeyboardButton("📷 Máy Digital", callback_data='cat_digital')],
+            [InlineKeyboardButton("🔍 Point & Shoot Film", callback_data='pns')],
+            [InlineKeyboardButton("📸 SLR & Rangefinder", callback_data='slr')],
+            [InlineKeyboardButton("🌟 Máy Đang Hot", callback_data='hot')],
+            [InlineKeyboardButton("💰 Xem Giá & Catalog", callback_data='price')],
+            [InlineKeyboardButton("🌐 Link Shop", callback_data='links')],
+            [InlineKeyboardButton("💬 Tư vấn tự do", callback_data='free')]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
-        
+
         await update.message.reply_text(
-            "👋 *Chào mừng bạn đến với MinciuFilm!* 📸\n\n"
-            "Mình là bot tư vấn máy ảnh chính hãng.\n"
-            "Vui lòng chọn danh mục hoặc chat trực tiếp:",
+            "👋 **Chào mừng bạn đến với MinciuFilm!** 📸\n\n"
+            "Máy ảnh film & digital cũ đã kiểm tra - Bảo hành 1 tháng - Ship COD toàn quốc\n\n"
+            "Chọn danh mục bên dưới để xem máy nhé!",
             parse_mode='Markdown',
             reply_markup=reply_markup
         )
@@ -49,27 +57,42 @@ class MinciuFilmBot:
         query = update.callback_query
         await query.answer()
 
-        if query.data == 'free_chat':
-            await query.edit_message_text("💬 Bạn muốn tư vấn gì? Hãy chat trực tiếp nhé!")
+        prompts = {
+            'cat_film': "Gợi ý các máy film đẹp đang có tại MinciuFilm",
+            'cat_digital': "Gợi ý các máy digital compact và superzoom đang có",
+            'pns': "Gợi ý máy Point & Shoot film như Espio, Canon Autoboy, Bigmini...",
+            'slr': "Gợi ý máy SLR film và Rangefinder chất lượng",
+            'hot': "Gợi ý những máy đang hot, bán chạy hoặc mới về của MinciuFilm",
+            'price': "Hiện giá một số máy tiêu biểu và chính sách giá của shop",
+            'links': "Gửi các link Facebook, Instagram, Threads của MinciuFilm cho khách",
+            'free': "Mở chế độ tư vấn tự do"
+        }
+
+        if query.data == 'links':
+            text = "🌐 **Link MinciuFilm**\n\n" \
+                   "📘 Facebook: https://www.facebook.com/minciu_film\n" \
+                   "📸 Instagram: https://www.instagram.com/minciu_film\n" \
+                   "🧵 Threads: https://www.threads.net/@minciu_film\n\n" \
+                   "Bạn có thể xem thêm máy mới nhất tại đây ạ!"
+            await query.edit_message_text(text, parse_mode='Markdown')
             return
 
-        category = query.data.split('_')[1]
-        response = await self.get_gemini_response(f"Gợi ý các máy {category} tốt nhất hiện nay cho shop MinciuFilm")
-        await query.edit_message_text(response)
+        user_query = prompts.get(query.data, "Tư vấn máy ảnh")
+        response = await self.get_gemini_response(user_query)
+        await query.edit_message_text(response, parse_mode='Markdown')
 
     async def handle_message(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        user_text = update.message.text
-        response = await self.get_gemini_response(user_text)
+        response = await self.get_gemini_response(update.message.text)
         await update.message.reply_text(response)
 
     async def get_gemini_response(self, user_query: str):
         try:
-            full_prompt = f"{SYSTEM_PROMPT}\n\nDữ liệu sản phẩm:\n{json.dumps(PRODUCTS_DATA, ensure_ascii=False)}\n\nYêu cầu: {user_query}"
+            full_prompt = f"{SYSTEM_PROMPT}\n\nThông tin sản phẩm:\n{json.dumps(PRODUCTS_DATA, ensure_ascii=False)}\n\nYêu cầu: {user_query}"
             response = model.generate_content(full_prompt)
             return response.text
         except Exception as e:
             logging.error(e)
-            return "Mình đang hơi bận, bạn thử hỏi lại hoặc inbox shop nhé ạ! 📸"
+            return "Mình đang kiểm tra máy cho bạn, nhắn lại sau ít phút nhé! 📸"
 
 if __name__ == "__main__":
     bot = MinciuFilmBot()
@@ -79,5 +102,5 @@ if __name__ == "__main__":
     app.add_handler(CallbackQueryHandler(bot.button_callback))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, bot.handle_message))
 
-    print("🤖 Bot MinciuFilm với Menu đã chạy...")
+    print("🤖 Bot MinciuFilm - Menu chuyên nghiệp đã chạy!")
     app.run_polling()
